@@ -1,0 +1,45 @@
+name: Trigger auto deployment for python-metrics-app
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/python-metrics-app-AutoDeployTrigger-b0532de3-a634-466d-a405-6f05334cb9a7.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.PYTHONMETRICSAPP_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }}
+          _dockerfilePathKey_: _dockerfilePath_
+          _targetLabelKey_: _targetLabel_
+          registryUrl: freestorage1769702122.azurecr.io
+          registryUsername: ${{ secrets.PYTHONMETRICSAPP_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.PYTHONMETRICSAPP_REGISTRY_PASSWORD }}
+          containerAppName: python-metrics-app
+          resourceGroup: free-tier-student
+          imageToBuild: freestorage1769702122.azurecr.io/python-metrics-app:${{ github.sha }}
+          
+            
+
+     
+
