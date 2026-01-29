@@ -9,4 +9,4 @@ WORKDIR /app
 COPY . .
 
 # run command
-CMD ["python", "myapp.py"]
+CMD ["python", "application.py"]
